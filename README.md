@@ -9,28 +9,37 @@ Created, sponsored and used in production by [Mashape](https://www.mashape.com),
 
 ### Features
 
-* Set the final backend servers from a simple configuration file
-* Optionally **auto-update** backend servers from a third-party HTTP resource
-* Automatic handling of downtimes, network failures and reconnections
-* Configurable timeout parameters
-* Read the responses from all the backend servers, or skip all of them (useful in *write-and-forget* scenarios)
+* Offload TCP connections from your client apps to the broadcaster. It can handle hundreds of backend connections, simplifying broadcasting data to servers just by opening one connection client-side.
+* Automatically handles backend connection downtimes, network failures and reconnections.
+* Optionally **auto-update** backend servers from one single configurable HTTP endpoint, useful for hot remote configuration without restarting the broadcaster.
+* Forwards back the responses from all the backend servers, or optionally skips them all: useful in *write-and-forget* scenarios.
+* Tunable network and timeout settings.
+* Very fast, and easy to use.
 
+## Usage
 
+```
+java -jar dynode-broadcaster.jar -c ./configuration
+```
 
 ## Use Cases
 
-There are many different use case scenarios where the Dynode Broadcaster can work well. For example, it can be used to create an eventual consistent cluster of Redis machines: to replicate counters, data, or implement an eventual consistent distributed caching cluster across a LAN/WAN.
+There are many different use case scenarios where the Dynode Broadcaster can work well. It can be used to create eventual consistent distributed clusters for those services that don't support clustering. For example you can use it with in-memory stores like Redis or Memcached to replicate any kind of data, counters, or implement an eventual consistent distributed caching cluster across a LAN/WAN. 
 
-* You have two Redis servers listening at `redis1.us:6379` and `redis2.eu:6379`.
-* You can start the TCP broadcaster on `broadcaster.us:6379`
+For example:
 
-The Dynode Broadcaster replicates any command sent to `broadcaster.us:6379` to both `redis1.us:6379` and `redis2.eu:6379`. 
+* You have two application servers in two different world regions: `app.us` and `app.eu`
+* You also have one Redis server for each region: `redis.us:6379` and `redis.eu:6379`
+* The application servers need to talk with Redis to load cached content. `app.us` will read from `redis.us` and `app.eu` will read from `redis.eu` to reduce network latency
+* Every application reads data from the closest Redis server, but broadcasts the writes to the other region by using Dynode Broadcaster
+* You can setip two Dynode Broadcasters in each region: `broadcaster.us:6379` and `broadcaster.eu:6379`
+* You configure both broadcasters with the following backend servers: `redis.us:6379` and `redis.eu:6379`
 
-If you have a server `application1.us` in the same region of `redis1.us`, you could execute all the reads directly from `redis1.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `application2.eu` could read the same data in his own region from `redis2.eu:6379`.
+With this configuration, any command sent to `broadcaster.us:6379` is broadcasted to both `redis1.us:6379` and `redis2.eu:6379`. The same happens for every command sent to `broadcaster.eu:6379`.
 
-# Usage
+The server `app.us` is in the same region of `redis.us`. Now you could execute all the reads directly from `redis.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `app.eu` could read the same data in his own region from `redis.eu:6379`. The app servers are using Redis for reading, and Dynode Broadcaster for writing.
 
-lin
+If you need to broadcast data to, let's say, 100+ Redis machines, open just one connection to the broadcaster and let him do the hard work for you. And with the auto-update feature, hot-configure the broadcaster remotely.
 
 # Configuration
 
