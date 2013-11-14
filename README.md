@@ -11,7 +11,7 @@ Created, sponsored and used in production by [Mashape](https://www.mashape.com),
 
 * Offload TCP connections from your client apps to the broadcaster. It can handle hundreds of backend connections, simplifying broadcasting data to servers just by opening one connection client-side.
 * Automatically handles backend connection downtimes, network failures and reconnections.
-* Optionally **auto-update** backend servers from one single configurable HTTP endpoint, useful for to hot configure the broadcaster remotely without restarting it.
+* Optionally **auto-update** backend servers from one single configurable HTTP endpoint, useful for hot configuring the broadcaster remotely without restarting it.
 * Forwards back the responses from all the backend servers, or optionally skips them all: useful in *write-and-forget* scenarios.
 * Tunable network and timeout settings.
 * Very fast, and easy to use.
