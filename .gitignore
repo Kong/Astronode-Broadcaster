@@ -1,0 +1,12 @@
+.metadata
+target
+.settings
+.project
+.classpath
+.DS_Store
+maven-head
+*.class
+*.pyc
+*.log
+*.log.*
+META-INF
