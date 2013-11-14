@@ -3,6 +3,7 @@ package com.mashape.dynode.broadcaster.io;
 import com.google.common.base.Function;
 import com.mashape.dynode.broadcaster.io.pool.BackendServerManager;
 import com.mashape.dynode.broadcaster.io.pool.BackendServerManagerEventListener;
+import com.mashape.dynode.broadcaster.log.Log;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -38,7 +39,7 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         channel = ctx.channel();
         clientAddress = (InetSocketAddress) channel.remoteAddress();
-        LOG.info("Client {}:{} connected", clientAddress.getHostString(), clientAddress.getPort());
+        Log.info(LOG, "Client {}:{} connected", clientAddress.getHostString(), clientAddress.getPort());
 
         BackendServerManager bsm = parent.getBackendServerManager();
         if (bsm.hasBackendServers()) {
@@ -51,7 +52,7 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
             }, this);
         } else {
             channel.close();
-            LOG.info("No backend servers in pool. Discarding client {}:{}", clientAddress.getHostString(), clientAddress.getPort());
+            Log.info(LOG, "No backend servers in pool. Discarding client {}:{}", clientAddress.getHostString(), clientAddress.getPort());
         }
     }
 
@@ -63,7 +64,7 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
             for (BackendHandler backend : handlers) {
                 backend.transferPacket(packet.retain());
             }
-            LOG.trace("Packet received from {}:{}. Size: {} byte(s). Broadcasting packet to {} backend server(s)",
+            Log.trace(LOG, "Packet received from {}:{}. Size: {} byte(s). Broadcasting packet to {} backend server(s)",
                     clientAddress.getHostString(), clientAddress.getPort(), packet.readableBytes(), handlers.size());
         } finally {
             ReferenceCountUtil.release(msg);
@@ -77,12 +78,12 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
             backend.stopCompletely();
         }
         backendHandlers.clear();
-        LOG.info("Client {}:{} disconnected", clientAddress.getHostString(), clientAddress.getPort());
+        Log.info(LOG, "Client {}:{} disconnected", clientAddress.getHostString(), clientAddress.getPort());
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LOG.debug("Exception occurred", cause);
+    	Log.error(LOG, "Exception occurred", cause);
         ChannelUtil.closeOnFlush(ctx.channel());
     }
 
@@ -91,7 +92,7 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.READER_IDLE) {
-                LOG.info("Disconnecting client {}:{} due to idle timeout", clientAddress.getHostString(), clientAddress.getPort());
+            	Log.info(LOG, "Disconnecting client {}:{} due to idle timeout", clientAddress.getHostString(), clientAddress.getPort());
                 ChannelUtil.closeOnFlush(ctx.channel());
             }
         }

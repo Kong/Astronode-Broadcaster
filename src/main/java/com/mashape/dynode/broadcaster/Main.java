@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
 import com.mashape.dynode.broadcaster.io.ServerLauncher;
+import com.mashape.dynode.broadcaster.log.Log;
 
 public class Main {
 	
@@ -44,7 +46,8 @@ public class Main {
 		// Load the configuration
 		DynodeConfiguration.init(line.getOptionValue("c"));
 		
-		LOG.info("Starting Dynode Broadcaster");
+		Log.info(LOG, "Starting Dynode Broadcaster");
+		
 		final ServerLauncher serverLauncher = new ServerLauncher(
 				Sets.newHashSet(new InetSocketAddress(DynodeConfiguration
 						.getHost(), DynodeConfiguration.getPort())),
@@ -69,7 +72,7 @@ public class Main {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				LOG.info("Shutting down Dynode Broadcaster");
+				Log.info(LOG, "Shutting Dynode Broadcaster");
 				serverLauncher.stop();
 			}
 		});
@@ -77,7 +80,7 @@ public class Main {
 		try {
 			serverLauncher.start();
 		} catch (InterruptedException e) {
-			LOG.error("Failed to start a server", e);
+			Log.error(LOG, "Failed to start a server");
 		}
 	}
 }

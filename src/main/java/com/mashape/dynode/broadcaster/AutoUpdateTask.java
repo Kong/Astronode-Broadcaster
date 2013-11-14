@@ -10,7 +10,9 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
 import com.mashape.dynode.broadcaster.io.ServerLauncher;
+import com.mashape.dynode.broadcaster.log.Log;
 import com.mashape.unirest.http.HttpMethod;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -20,6 +22,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 public class AutoUpdateTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AutoUpdateTask.class);
+	
 	private ServerLauncher serverLauncher;
 	
 	public AutoUpdateTask(ServerLauncher serverLauncher) {
@@ -28,7 +31,7 @@ public class AutoUpdateTask implements Runnable {
 
 	@Override
 	public void run() {
-		LOG.info("Autoupdating..");
+		Log.info(LOG, "Auto-updating servers");
 		
 		String url = DynodeConfiguration.getServersAutoupdateUrl();
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -40,7 +43,7 @@ public class AutoUpdateTask implements Runnable {
 				if (parts.length == 2) {
 					parameters.put(parts[0], parts[1]);
 				} else {
-					throw new RuntimeException("Wrong auto-update parameters format");
+					Log.error(LOG, "Wrong auto-update parameters format");
 				}
 			}
 		}
@@ -78,11 +81,11 @@ public class AutoUpdateTask implements Runnable {
 					}
 				}
 			} else {
-				LOG.error("The auto update URL returned " + response.getCode());
+				Log.error(LOG, "The auto update URL returned " + response.getCode());
 			}
 			
 		} catch (UnirestException | JSONException e) {
-			LOG.error("Exception", e);
+			Log.error(LOG, "Exception during auto-update", e);
 		}
 		
 	}

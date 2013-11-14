@@ -22,7 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.DynodeConfiguration;
+import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
+import com.mashape.dynode.broadcaster.log.Log;
 
 @ChannelHandler.Sharable
 class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutureListener, Runnable {
@@ -53,7 +54,7 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, DynodeConfiguration.getConnectTimeoutSeconds() * 1000)
                 .handler(this);
-        LOG.trace("{} backend handler initialized", id);
+        Log.trace(LOG, "{} backend handler initialized", id);
     }
 
     @Override
@@ -64,11 +65,11 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
                 Channel clientChannel = frontendHandler.getChannel();
                 if (clientChannel.isActive() && keepWorking.get()) {
                     clientChannel.writeAndFlush(packet.retain());
-                    LOG.trace("Transferring received packet from backend server {}:{} to client {}:{}. Size: {} byte(s)",
+                    Log.trace(LOG, "Transferring received packet from backend server {}:{} to client {}:{}. Size: {} byte(s)",
                             serverAddress.getHostString(), serverAddress.getPort(),
                             clientAddress.getHostString(), clientAddress.getPort(), packet.readableBytes());
                 } else {
-                    LOG.trace("Client socket is not active anymore or handler was stopped: {}. Ignoring received packet",
+                	Log.trace(LOG, "Client socket is not active anymore or handler was stopped: {}. Ignoring received packet",
                             id);
                 }
             }
@@ -86,7 +87,7 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
             }
         } else {
             packet.release();
-            LOG.trace("Handler was stopped: {}. Ignoring request to transfer a packet", id);
+            Log.trace(LOG, "Handler was stopped: {}. Ignoring request to transfer a packet", id);
         }
     }
 
@@ -114,11 +115,11 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    LOG.info("Connection with backend server established: {}", id);
+                	Log.info(LOG, "Connection with backend server established: {}", id);
                     transferFirstPacketInQueue();
                 } else {
                     channel.close();
-                    LOG.error("Connection establishment failed: " + serverAddress.getHostString() + ':' + serverAddress.getPort(), future.cause());
+                    Log.error(LOG, "Connection establishment failed: " + serverAddress.getHostString() + ':' + serverAddress.getPort(), future.cause());
                     if (keepWorking.get()) {
                         scheduleConnectionEstablishment();
                     }
@@ -128,7 +129,7 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
     }
 
     private void scheduleConnectionEstablishment() {
-        LOG.info("New attempt to establish a connection with backend " +
+    	Log.info(LOG, "New attempt to establish a connection with backend " +
                 "server {}:{} will be made {} seconds later",
                 serverAddress.getHostString(), serverAddress.getPort(), DynodeConfiguration.getReconnectDelaySeconds());
         parent.getWorkerGroup().schedule(BackendHandler.this, DynodeConfiguration.getReconnectDelaySeconds(), TimeUnit.SECONDS);
@@ -153,18 +154,18 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
     @Override
     public synchronized void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
-            LOG.trace("Packet transferred successfully: {}", id);
+        	Log.trace(LOG, "Packet transferred successfully: {}", id);
             ByteBuf packet = packetQueue.poll();
             packet.release();
             if (packetQueue.isEmpty()) {
                 transferInProgress = false;
-                LOG.trace("No more packets in queue: {}. Waiting for next packet", id);
+                Log.trace(LOG, "No more packets in queue: {}. Waiting for next packet", id);
             } else if (keepWorking.get()) {
-                LOG.trace("There are packets in queue: {}. Transferring next", id);
+            	Log.trace(LOG, "There are packets in queue: {}. Transferring next", id);
                 doTransferPendingPacket();
             }
         } else {
-            LOG.error("Packet transferring failed: " + id, future.cause());
+        	Log.error(LOG, "Packet transferring failed: " + id, future.cause());
             if (keepWorking.get()) {
                 channel.close();
                 doTransferPendingPacket();
@@ -193,6 +194,6 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
             packet.release();
         }
         packetQueue.clear();
-        LOG.trace("{} backend handler stopped", id);
+        Log.trace(LOG, "{} backend handler stopped", id);
     }
 }

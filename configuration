@@ -43,6 +43,9 @@ host=localhost
 # Check that you have permissions to run on the specified port
 port=9000
 
+# Set the log level, available values: TRACE, INFO, ERROR
+log_level=INFO
+
 ############################## NETWORK SETTINGS ###############################
 backlog_size=128
 reuse_addr=true

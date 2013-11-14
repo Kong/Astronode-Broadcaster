@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster;
+package com.mashape.dynode.broadcaster.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mashape.dynode.broadcaster.log.Log;
 import com.mashape.unirest.http.HttpMethod;
 
 public class DynodeConfiguration {
@@ -21,6 +22,7 @@ public class DynodeConfiguration {
 	
 	private static String host;
 	private static int port;
+	private static LogLevel logLevel;
 	private static int backlogSize;
 	private static boolean reuseAddr;
 	private static boolean discardResponses;
@@ -37,8 +39,6 @@ public class DynodeConfiguration {
 	private static int serversAutoupdateRefresh;
 	
 	public static void init(String path) {
-		LOG.info("Loading Dynode credentials");
-		
 		Properties properties = new Properties();
 		try {
 			FileInputStream inputStream = new FileInputStream(new File(path));
@@ -51,6 +51,8 @@ public class DynodeConfiguration {
 			LOG.error("Error loading configuration file");
 			throw new RuntimeException("Can't load configuration file at: " + path);
 		}
+		
+		logLevel = LogLevel.valueOf(loadEntry(properties, "log_level", true, true).toUpperCase());
 		
 		host = loadEntry(properties, "host");
 		port = Integer.parseInt(loadEntry(properties, "port"));
@@ -79,7 +81,7 @@ public class DynodeConfiguration {
 			
 			// Load method
 			String autoupdateMethod = loadEntry(properties, "servers_autoupdate_method");
-			serversAutoupdateMethod = HttpMethod.valueOf(autoupdateMethod.trim().toUpperCase());
+			serversAutoupdateMethod = HttpMethod.valueOf(autoupdateMethod.toUpperCase());
 			
 			serversAutoupdateUrl = loadEntry(properties, "servers_autoupdate_url");
 			serversAutoupdateParameters = loadEntry(properties, "servers_autoupdate_parameters");
@@ -96,17 +98,23 @@ public class DynodeConfiguration {
 		return null;
 	}
 	
-	private static String loadEntry(Properties properties, String key, boolean required) {
+	private static String loadEntry(Properties properties, String key, boolean required, boolean skipLog) {
 		String value = properties.getProperty(key);
 		if (StringUtils.isBlank(value) && required) {
 			throw new RuntimeException("Invalid value for key: " + key);
+		} else {
+			value = value.trim();
 		}
-		LOG.info("> " + key + ": " + value);
+		if (!skipLog) Log.info(LOG, "> " + key + ": " + value);
 		return value;
 	}
 	
+	private static String loadEntry(Properties properties, String key, boolean required) {
+		return loadEntry(properties, key, required, false);
+	}
+	
 	private static String loadEntry(Properties properties, String key) {
-		return loadEntry(properties, key, true);
+		return loadEntry(properties, key, true, false);
 	}
 	
 	public static int getPort() {
@@ -163,6 +171,10 @@ public class DynodeConfiguration {
 
 	public static int getServersAutoupdateRefresh() {
 		return serversAutoupdateRefresh;
+	}
+	
+	public static LogLevel getLogLevel() {
+		return logLevel;
 	}
 	
 }

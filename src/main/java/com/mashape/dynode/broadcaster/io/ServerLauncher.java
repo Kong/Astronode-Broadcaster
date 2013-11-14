@@ -23,8 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.DynodeConfiguration;
+import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
 import com.mashape.dynode.broadcaster.io.pool.BackendServerManager;
+import com.mashape.dynode.broadcaster.log.Log;
 
 public class ServerLauncher {
 	
@@ -54,7 +55,7 @@ public class ServerLauncher {
         if (started.compareAndSet(false, true)) {
             stopped.set(false);
 
-            LOG.info("Initializing event loop groups and server socket");
+            Log.info(LOG, "Initializing event loop groups and server socket");
             try {
                 doStart();
             } finally {
@@ -86,7 +87,7 @@ public class ServerLauncher {
             Channel channel = bootstrap.bind(addr).sync().channel();
             allChannels.add(channel);
             serverChannels.add(channel);
-            LOG.info("Server socket bound to {}:{}", addr.getHostString(), addr.getPort());
+            Log.info(LOG, "Server socket bound to {}:{}", addr.getHostString(), addr.getPort());
         }
 
         for (Channel channel : serverChannels) {
@@ -96,10 +97,10 @@ public class ServerLauncher {
 
     public void stop() {
         if (stopped.compareAndSet(false, true)) {
-            LOG.info("Stopping server. Closing all opened sockets");
+        	Log.info(LOG, "Stopping server. Closing all opened sockets");
             allChannels.close().awaitUninterruptibly();
 
-            LOG.info("Shutdown event loop groups");
+            Log.info(LOG, "Shutdown event loop groups");
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
