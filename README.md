@@ -1,8 +1,13 @@
+<p align="center">
+<img src="http://upload.wikimedia.org/wikipedia/commons/d/dc/Broadcast.svg" alt="Logo" height="120" />
+</p>
+
 # Dynode Broadcaster
+The Dynode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready.
 
-The Dynode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready. It automatically handles downtimes, network failures and reconnections.
+Created, sponsored and used in production by [Mashape](https://www.mashape.com), the Cloud API Hub.
 
-## Features
+### Features
 
 * Set the final backend servers from a simple configuration file
 * Optionally **auto-update** backend servers from a third-party HTTP resource
@@ -10,11 +15,7 @@ The Dynode Broadcaster is a TCP replication server, or broadcaster, that replica
 * Configurable timeout parameters
 * Read the responses from all the backend servers, or skip all of them (useful in *write-and-forget* scenarios)
 
-<div style="text-align: center;">
-<img src="http://upload.wikimedia.org/wikipedia/commons/d/dc/Broadcast.svg" alt="Logo" style="height: 200px;" />
-</div>
 
-Created, sponsored and used in production by [Mashape](https://www.mashape.com), the Cloud API Hub.
 
 ## Use Cases
 
