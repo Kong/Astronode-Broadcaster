@@ -11,7 +11,7 @@ Created, sponsored and used in production by [Mashape](https://www.mashape.com),
 
 * Offload TCP connections from your client apps to the broadcaster. It can handle hundreds of backend connections, simplifying broadcasting data to servers just by opening one connection client-side.
 * Automatically handles backend connection downtimes, network failures and reconnections.
-* Optionally **auto-update** backend servers from one single configurable HTTP endpoint, useful for hot remote configuration without restarting the broadcaster.
+* Optionally **auto-update** backend servers from one single configurable HTTP endpoint, useful for to hot configure the broadcaster remotely without restarting it.
 * Forwards back the responses from all the backend servers, or optionally skips them all: useful in *write-and-forget* scenarios.
 * Tunable network and timeout settings.
 * Very fast, and easy to use.
@@ -32,14 +32,14 @@ For example:
 * You also have one Redis server for each region: `redis.us:6379` and `redis.eu:6379`
 * The application servers need to talk with Redis to load cached content. `app.us` will read from `redis.us` and `app.eu` will read from `redis.eu` to reduce network latency
 * Every application reads data from the closest Redis server, but broadcasts the writes to the other region by using Dynode Broadcaster
-* You can setip two Dynode Broadcasters in each region: `broadcaster.us:6379` and `broadcaster.eu:6379`
+* You can setup two Dynode Broadcasters in each region: `broadcaster.us:6379` and `broadcaster.eu:6379`
 * You configure both broadcasters with the following backend servers: `redis.us:6379` and `redis.eu:6379`
 
 With this configuration, any command sent to `broadcaster.us:6379` is broadcasted to both `redis1.us:6379` and `redis2.eu:6379`. The same happens for every command sent to `broadcaster.eu:6379`.
 
-The server `app.us` is in the same region of `redis.us`. Now you could execute all the reads directly from `redis.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `app.eu` could read the same data in his own region from `redis.eu:6379`. The app servers are using Redis for reading, and Dynode Broadcaster for writing.
+The server `app.us` is in the same region of `redis.us`. Now you could execute all the reads directly from `redis.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `app.eu` could read the same data in his own region from `redis.eu:6379`. Basically the app servers are using Redis for reading, and Dynode Broadcaster for writing.
 
-If you need to broadcast data to, let's say, 100+ Redis machines, open just one connection to the broadcaster and let him do the hard work for you. And with the auto-update feature, hot-configure the broadcaster remotely.
+If you need to broadcast data to, let's say, 100+ Redis machines, open just one connection to the broadcaster and let him do the hard work for you. And with the auto-update feature, you can hot-configure the broadcaster remotely without reloading it.
 
 # Configuration
 
