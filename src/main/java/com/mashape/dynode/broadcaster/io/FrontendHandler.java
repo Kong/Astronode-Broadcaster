@@ -99,7 +99,9 @@ class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendSer
 
     @Override
     public void serverAdded(InetSocketAddress address) {
-        backendHandlers.put(address, new BackendHandler(parent, this, address));
+    	if (!backendHandlers.containsKey(address)) {
+    		backendHandlers.put(address, new BackendHandler(parent, this, address));
+    	}
     }
 
     @Override

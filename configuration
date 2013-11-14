@@ -6,7 +6,7 @@
 # both the host and the port are mandatory.
 #
 # the servers must be comma separated "host:port" values, like: "servers=127.0.0.1:8000, 127.0.0.2:8001"
-servers=127.0.0.1:6379
+servers=127.0.0.1:6379,127.0.0.1:6379
 
 ################################ AUTO-UPDATE  #################################
 # Instead, or in addition, of explicitly set the backend servers, you can also set an HTTP endpoint that will load
