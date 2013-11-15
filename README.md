@@ -1,7 +1,7 @@
 <p align="center">
 <img src="http://upload.wikimedia.org/wikipedia/commons/d/dc/Broadcast.svg" alt="Logo" height="120" />
 </p>
-WORK IN PROGRESS
+
 # Dynode Broadcaster
 The Dynode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready.
 
