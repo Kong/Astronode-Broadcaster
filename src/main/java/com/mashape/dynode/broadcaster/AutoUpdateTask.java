@@ -22,9 +22,9 @@ import com.mashape.unirest.http.Unirest;
 public class AutoUpdateTask implements Runnable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AutoUpdateTask.class);
-	
+
 	private ServerLauncher serverLauncher;
-	
+
 	public AutoUpdateTask(ServerLauncher serverLauncher) {
 		this.serverLauncher = serverLauncher;
 	}
@@ -32,13 +32,13 @@ public class AutoUpdateTask implements Runnable {
 	@Override
 	public void run() {
 		Log.info(LOG, "Auto-updating servers");
-		
+
 		String url = DynodeConfiguration.getServersAutoupdateUrl();
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		String rawParameters = DynodeConfiguration.getServersAutoupdateParameters();
 		if (StringUtils.isNotBlank(rawParameters)) {
 			String[] rawParametersParts = rawParameters.split("&");
-			for(String rawParametersPart : rawParametersParts) {
+			for (String rawParametersPart : rawParametersParts) {
 				String[] parts = rawParametersPart.split("=");
 				if (parts.length == 2) {
 					parameters.put(parts[0], parts[1]);
@@ -47,7 +47,7 @@ public class AutoUpdateTask implements Runnable {
 				}
 			}
 		}
-		
+
 		HttpMethod method = DynodeConfiguration.getServersAutoupdateMethod();
 		try {
 			HttpResponse<JsonNode> response = null;
@@ -74,7 +74,7 @@ public class AutoUpdateTask implements Runnable {
 			if (response.getCode() == 200) {
 				JSONArray servers = response.getBody().getArray();
 				Set<InetSocketAddress> serverObjects = new HashSet<>();
-				for(int i=0;i<servers.length();i++) {
+				for (int i = 0; i < servers.length(); i++) {
 					String server = servers.getString(i);
 					InetSocketAddress address = DynodeConfiguration.getAddress(server);
 					if (address != null) {
@@ -86,11 +86,11 @@ public class AutoUpdateTask implements Runnable {
 			} else {
 				Log.error(LOG, "The auto update URL returned " + response.getCode());
 			}
-			
+
 		} catch (Exception e) {
 			Log.error(LOG, "Exception during auto-update", e);
 		}
-		
+
 	}
 
 }

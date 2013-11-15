@@ -19,7 +19,7 @@ import com.mashape.unirest.http.HttpMethod;
 public class DynodeConfiguration {
 
 	final static Logger LOG = LoggerFactory.getLogger(DynodeConfiguration.class);
-	
+
 	private static String host;
 	private static int port;
 	private static LogLevel logLevel;
@@ -29,15 +29,15 @@ public class DynodeConfiguration {
 	private static int readIdleSeconds;
 	private static int reconnectDelaySeconds;
 	private static int connectTimeoutSeconds;
-	
+
 	private static List<InetSocketAddress> servers = new LinkedList<>();
-	
+
 	private static boolean autoupdate;
 	private static HttpMethod serversAutoupdateMethod;
 	private static String serversAutoupdateUrl;
 	private static String serversAutoupdateParameters;
 	private static int serversAutoupdateRefresh;
-	
+
 	public static void init(String path) {
 		Properties properties = new Properties();
 		try {
@@ -51,9 +51,9 @@ public class DynodeConfiguration {
 			LOG.error("Error loading configuration file");
 			throw new RuntimeException("Can't load configuration file at: " + path);
 		}
-		
+
 		logLevel = LogLevel.valueOf(loadEntry(properties, "log_level", true, true).toUpperCase());
-		
+
 		host = loadEntry(properties, "host");
 		port = Integer.parseInt(loadEntry(properties, "port"));
 
@@ -63,33 +63,33 @@ public class DynodeConfiguration {
 		readIdleSeconds = Integer.parseInt(loadEntry(properties, "read_idle_timeout"));
 		reconnectDelaySeconds = Integer.parseInt(loadEntry(properties, "reconnect_delay_timeout"));
 		connectTimeoutSeconds = Integer.parseInt(loadEntry(properties, "connect_timeout"));
-		
+
 		String serversList = loadEntry(properties, "servers", false);
 		if (StringUtils.isNotBlank(serversList)) {
 			String[] confServers = serversList.split(",");
-			for(String server : confServers) {
+			for (String server : confServers) {
 				InetSocketAddress address = getAddress(server);
 				if (address != null) {
 					servers.add(address);
 				}
 			}
 		}
-		
+
 		String confAutoupdate = loadEntry(properties, "servers_autoupdate", false);
 		if (StringUtils.isNotBlank(confAutoupdate) && Boolean.parseBoolean(confAutoupdate)) {
 			autoupdate = true;
-			
+
 			// Load method
 			String autoupdateMethod = loadEntry(properties, "servers_autoupdate_method");
 			serversAutoupdateMethod = HttpMethod.valueOf(autoupdateMethod.toUpperCase());
-			
+
 			serversAutoupdateUrl = loadEntry(properties, "servers_autoupdate_url");
 			serversAutoupdateParameters = loadEntry(properties, "servers_autoupdate_parameters");
 			serversAutoupdateRefresh = Integer.parseInt(loadEntry(properties, "servers_autoupdate_refresh"));
 		}
-		
+
 	}
-	
+
 	public static InetSocketAddress getAddress(String server) {
 		String[] parts = server.split(":");
 		if (parts.length == 2) {
@@ -97,7 +97,7 @@ public class DynodeConfiguration {
 		}
 		return null;
 	}
-	
+
 	private static String loadEntry(Properties properties, String key, boolean required, boolean skipLog) {
 		String value = properties.getProperty(key);
 		if (StringUtils.isBlank(value) && required) {
@@ -105,18 +105,19 @@ public class DynodeConfiguration {
 		} else {
 			value = value.trim();
 		}
-		if (!skipLog) Log.info(LOG, "> " + key + ": " + value);
+		if (!skipLog)
+			Log.info(LOG, "> " + key + ": " + value);
 		return value;
 	}
-	
+
 	private static String loadEntry(Properties properties, String key, boolean required) {
 		return loadEntry(properties, key, required, false);
 	}
-	
+
 	private static String loadEntry(Properties properties, String key) {
 		return loadEntry(properties, key, true, false);
 	}
-	
+
 	public static int getPort() {
 		return port;
 	}
@@ -124,27 +125,27 @@ public class DynodeConfiguration {
 	public static int getBacklogSize() {
 		return backlogSize;
 	}
-	
+
 	public static boolean getReuseAddr() {
 		return reuseAddr;
 	}
-	
+
 	public static boolean getDiscardResponses() {
 		return discardResponses;
 	}
-	
+
 	public static int getReadIdleSeconds() {
 		return readIdleSeconds;
 	}
-	
+
 	public static int getReconnectDelaySeconds() {
 		return reconnectDelaySeconds;
 	}
-	
+
 	public static int getConnectTimeoutSeconds() {
 		return connectTimeoutSeconds;
 	}
-	
+
 	public static String getHost() {
 		return host;
 	}
@@ -172,9 +173,9 @@ public class DynodeConfiguration {
 	public static int getServersAutoupdateRefresh() {
 		return serversAutoupdateRefresh;
 	}
-	
+
 	public static LogLevel getLogLevel() {
 		return logLevel;
 	}
-	
+
 }

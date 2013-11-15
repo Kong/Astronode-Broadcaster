@@ -28,93 +28,91 @@ import com.mashape.dynode.broadcaster.io.pool.BackendServerManager;
 import com.mashape.dynode.broadcaster.log.Log;
 
 public class ServerLauncher {
-	
-    private static final Logger LOG = LoggerFactory.getLogger(ServerLauncher.class);
 
-    private final Set<InetSocketAddress> bindAddresses;
-    private final boolean discardBackendResponses;
-    private final EventLoopGroup bossGroup;
-    private final EventLoopGroup workerGroup;
-    private final AtomicBoolean started;
-    private final AtomicBoolean stopped;
-    private final ChannelGroup allChannels;
-    private final BackendServerManager backendServerManager;
+	private static final Logger LOG = LoggerFactory.getLogger(ServerLauncher.class);
 
-    public ServerLauncher(Set<InetSocketAddress> bindAddresses, boolean discardBackendResponses) {
-        this.bindAddresses = bindAddresses;
-        this.discardBackendResponses = discardBackendResponses;
-        this.bossGroup = new NioEventLoopGroup();
-        this.workerGroup = new NioEventLoopGroup();
-        this.started = new AtomicBoolean(false);
-        this.stopped = new AtomicBoolean(true);
-        this.allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-        this.backendServerManager = new BackendServerManager();
-    }
+	private final Set<InetSocketAddress> bindAddresses;
+	private final boolean discardBackendResponses;
+	private final EventLoopGroup bossGroup;
+	private final EventLoopGroup workerGroup;
+	private final AtomicBoolean started;
+	private final AtomicBoolean stopped;
+	private final ChannelGroup allChannels;
+	private final BackendServerManager backendServerManager;
 
-    public void start() throws InterruptedException {
-        if (started.compareAndSet(false, true)) {
-            stopped.set(false);
+	public ServerLauncher(Set<InetSocketAddress> bindAddresses, boolean discardBackendResponses) {
+		this.bindAddresses = bindAddresses;
+		this.discardBackendResponses = discardBackendResponses;
+		this.bossGroup = new NioEventLoopGroup();
+		this.workerGroup = new NioEventLoopGroup();
+		this.started = new AtomicBoolean(false);
+		this.stopped = new AtomicBoolean(true);
+		this.allChannels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+		this.backendServerManager = new BackendServerManager();
+	}
 
-            Log.info(LOG, "Initializing event loop groups and server socket");
-            try {
-                doStart();
-            } finally {
-                stop();
-            }
-        } else {
-            throw new IllegalStateException("Call of start() multiply times on a single ServerLauncher instance is not allowed");
-        }
-    }
+	public void start() throws InterruptedException {
+		if (started.compareAndSet(false, true)) {
+			stopped.set(false);
 
-    private void doStart() throws InterruptedException {
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        bootstrap.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        allChannels.add(ch);
-                        ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new IdleStateHandler(DynodeConfiguration.getReadIdleSeconds(), 0, 0));
-                        pipeline.addLast(new FrontendHandler(ServerLauncher.this));
-                    }
-                })
-                .option(ChannelOption.SO_BACKLOG, DynodeConfiguration.getBacklogSize())
-                .option(ChannelOption.SO_REUSEADDR, DynodeConfiguration.getReuseAddr());
+			Log.info(LOG, "Initializing event loop groups and server socket");
+			try {
+				doStart();
+			} finally {
+				stop();
+			}
+		} else {
+			throw new IllegalStateException("Call of start() multiply times on a single ServerLauncher instance is not allowed");
+		}
+	}
 
-        List<Channel> serverChannels = new ArrayList<>(bindAddresses.size());
-        for (InetSocketAddress addr : bindAddresses) {
-            Channel channel = bootstrap.bind(addr).sync().channel();
-            allChannels.add(channel);
-            serverChannels.add(channel);
-            Log.info(LOG, "Server socket bound to {}:{}", addr.getHostString(), addr.getPort());
-        }
+	private void doStart() throws InterruptedException {
+		ServerBootstrap bootstrap = new ServerBootstrap();
+		bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+				.childHandler(new ChannelInitializer<SocketChannel>() {
+					@Override
+					public void initChannel(SocketChannel ch) throws Exception {
+						allChannels.add(ch);
+						ChannelPipeline pipeline = ch.pipeline();
+						pipeline.addLast(new IdleStateHandler(DynodeConfiguration.getReadIdleSeconds(), 0, 0));
+						pipeline.addLast(new FrontendHandler(ServerLauncher.this));
+					}
+				}).option(ChannelOption.SO_BACKLOG, DynodeConfiguration.getBacklogSize())
+				.option(ChannelOption.SO_REUSEADDR, DynodeConfiguration.getReuseAddr());
 
-        for (Channel channel : serverChannels) {
-            channel.closeFuture().awaitUninterruptibly();
-        }
-    }
+		List<Channel> serverChannels = new ArrayList<>(bindAddresses.size());
+		for (InetSocketAddress addr : bindAddresses) {
+			Channel channel = bootstrap.bind(addr).sync().channel();
+			allChannels.add(channel);
+			serverChannels.add(channel);
+			Log.info(LOG, "Server socket bound to {}:{}", addr.getHostString(), addr.getPort());
+		}
 
-    public void stop() {
-        if (stopped.compareAndSet(false, true)) {
-        	Log.info(LOG, "Stopping server. Closing all opened sockets");
-            allChannels.close().awaitUninterruptibly();
+		for (Channel channel : serverChannels) {
+			channel.closeFuture().awaitUninterruptibly();
+		}
+	}
 
-            Log.info(LOG, "Shutdown event loop groups");
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
-    }
+	public void stop() {
+		if (stopped.compareAndSet(false, true)) {
+			Log.info(LOG, "Stopping server. Closing all opened sockets");
+			allChannels.close().awaitUninterruptibly();
 
-    public boolean isDiscardBackendResponses() {
-        return discardBackendResponses;
-    }
+			Log.info(LOG, "Shutdown event loop groups");
+			workerGroup.shutdownGracefully();
+			bossGroup.shutdownGracefully();
+		}
+	}
 
-    public BackendServerManager getBackendServerManager() {
-        return backendServerManager;
-    }
+	public boolean isDiscardBackendResponses() {
+		return discardBackendResponses;
+	}
 
-    protected EventLoopGroup getWorkerGroup() {
-        return workerGroup;
-    }
+	public BackendServerManager getBackendServerManager() {
+		return backendServerManager;
+	}
+
+	protected EventLoopGroup getWorkerGroup() {
+		return workerGroup;
+	}
 }

@@ -21,43 +21,45 @@ import com.mashape.dynode.broadcaster.io.ServerLauncher;
 import com.mashape.dynode.broadcaster.log.Log;
 
 public class Main {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
 	private static CommandLine parseArguments(Options options, String[] args) throws ParseException {
 		options.addOption("c", "configuration", true, "The configuration file path");
 		options.addOption("h", false, "Show help");
-		
+
 		CommandLineParser parser = new BasicParser();
 		CommandLine line = parser.parse(options, args);
 		return line;
 	}
-	
+
 	public static void main(String[] args) throws ParseException {
 		Options options = new Options();
 		CommandLine line = parseArguments(options, args);
-		
+
 		if (line.hasOption("h") || !line.hasOption("c")) {
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("dynode", options, true);
 			System.exit(0);
 		}
-		
+
+		init(line.getOptionValue("c"));
+	}
+
+	public static void init(String configurationPath) {
 		// Load the configuration
-		DynodeConfiguration.init(line.getOptionValue("c"));
-		
+		DynodeConfiguration.init(configurationPath);
+
 		Log.info(LOG, "Starting Dynode Broadcaster");
-		
-		final ServerLauncher serverLauncher = new ServerLauncher(
-				Sets.newHashSet(new InetSocketAddress(DynodeConfiguration
-						.getHost(), DynodeConfiguration.getPort())),
-				DynodeConfiguration.getDiscardResponses());
+
+		final ServerLauncher serverLauncher = new ServerLauncher(Sets.newHashSet(new InetSocketAddress(DynodeConfiguration
+				.getHost(), DynodeConfiguration.getPort())), DynodeConfiguration.getDiscardResponses());
 
 		List<InetSocketAddress> servers = DynodeConfiguration.getServers();
-		for(InetSocketAddress server : servers) {
+		for (InetSocketAddress server : servers) {
 			serverLauncher.getBackendServerManager().addServer(server);
 		}
-		
+
 		final ScheduledExecutorService autoUpdateExecutor = Executors.newScheduledThreadPool(1);
 		if (DynodeConfiguration.isAutoupdate()) {
 			int refresh = DynodeConfiguration.getServersAutoupdateRefresh();
@@ -68,7 +70,7 @@ public class Main {
 				autoUpdateExecutor.schedule(autoUpdateTask, 0, TimeUnit.SECONDS);
 			}
 		}
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
