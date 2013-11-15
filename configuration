@@ -33,7 +33,8 @@ servers_autoupdate_parameters=
 
 # The amount of seconds after which the servers will be repeatedly refreshed by making the HTTP request
 #
-# set to "0" zero to never refresh the servers after the first request.
+# set to "0" zero to never refresh the servers after the first request, and only them the first time when 
+# the broadcaster starts
 servers_autoupdate_refresh=10
 
 ############################## GENERAL SETTINGS ###############################
