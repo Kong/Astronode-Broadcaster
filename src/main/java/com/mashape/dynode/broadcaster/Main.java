@@ -58,8 +58,8 @@ public class Main {
 			serverLauncher.getBackendServerManager().addServer(server);
 		}
 		
+		final ScheduledExecutorService autoUpdateExecutor = Executors.newScheduledThreadPool(1);
 		if (DynodeConfiguration.isAutoupdate()) {
-			ScheduledExecutorService autoUpdateExecutor = Executors.newSingleThreadScheduledExecutor();
 			int refresh = DynodeConfiguration.getServersAutoupdateRefresh();
 			AutoUpdateTask autoUpdateTask = new AutoUpdateTask(serverLauncher);
 			if (refresh > 0) {
@@ -73,6 +73,7 @@ public class Main {
 			@Override
 			public void run() {
 				Log.info(LOG, "Shutting Dynode Broadcaster");
+				autoUpdateExecutor.shutdown();
 				serverLauncher.stop();
 			}
 		});

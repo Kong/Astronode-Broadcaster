@@ -1,10 +1,12 @@
 package com.mashape.dynode.broadcaster.io.pool;
 
-import com.google.common.base.Function;
-
 import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class BackendServerManager {
     private Set<InetSocketAddress> backendServers;
@@ -22,6 +24,16 @@ public class BackendServerManager {
 
     public synchronized boolean removeEventListener(BackendServerManagerEventListener listener) {
         return eventListeners.remove(listener);
+    }
+    
+    public synchronized void setServers(final Set<InetSocketAddress> addresses) {
+    	for(InetSocketAddress address : addresses) {
+    		addServer(address);
+    	}
+    	ImmutableSet<InetSocketAddress> difference = Sets.symmetricDifference(backendServers, addresses).immutableCopy();
+    	for(InetSocketAddress address : difference) {
+    		removeServer(address);
+    	}
     }
 
     public synchronized boolean addServer(final InetSocketAddress address) {

@@ -2,11 +2,12 @@ package com.mashape.dynode.broadcaster;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ import com.mashape.unirest.http.HttpMethod;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class AutoUpdateTask implements Runnable {
 
@@ -73,18 +73,21 @@ public class AutoUpdateTask implements Runnable {
 
 			if (response.getCode() == 200) {
 				JSONArray servers = response.getBody().getArray();
+				Set<InetSocketAddress> serverObjects = new HashSet<>();
 				for(int i=0;i<servers.length();i++) {
 					String server = servers.getString(i);
 					InetSocketAddress address = DynodeConfiguration.getAddress(server);
 					if (address != null) {
-						serverLauncher.getBackendServerManager().addServer(address);
+						Log.info(LOG, "* Adding " + server);
+						serverObjects.add(address);
 					}
 				}
+				serverLauncher.getBackendServerManager().setServers(serverObjects);
 			} else {
 				Log.error(LOG, "The auto update URL returned " + response.getCode());
 			}
 			
-		} catch (UnirestException | JSONException e) {
+		} catch (Exception e) {
 			Log.error(LOG, "Exception during auto-update", e);
 		}
 		

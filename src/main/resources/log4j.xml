@@ -13,10 +13,10 @@
 		<priority value="ERROR"/>
    	</category>
 
-	<category name="io.netty">
+	<category name="org.apache">
 		<priority value="ERROR"/>
    	</category>
-
+   	
 	<root>
 		<priority value="TRACE" />
 		<appender-ref ref="CONSOLE" />
