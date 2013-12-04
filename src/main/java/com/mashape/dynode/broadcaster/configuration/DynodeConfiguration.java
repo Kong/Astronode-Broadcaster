@@ -84,7 +84,7 @@ public class DynodeConfiguration {
 			serversAutoupdateMethod = HttpMethod.valueOf(autoupdateMethod.toUpperCase());
 
 			serversAutoupdateUrl = loadEntry(properties, "servers_autoupdate_url");
-			serversAutoupdateParameters = loadEntry(properties, "servers_autoupdate_parameters");
+			serversAutoupdateParameters = loadEntry(properties, "servers_autoupdate_parameters", false);
 			serversAutoupdateRefresh = Integer.parseInt(loadEntry(properties, "servers_autoupdate_refresh"));
 		}
 
