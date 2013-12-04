@@ -28,7 +28,9 @@ public class BackendServerManager {
 
 	public synchronized void setServers(final Set<InetSocketAddress> addresses) {
 		for (InetSocketAddress address : addresses) {
-			addServer(address);
+			if (!backendServers.contains(address)) {
+				addServer(address);
+			}
 		}
 		ImmutableSet<InetSocketAddress> difference = Sets.symmetricDifference(backendServers, addresses).immutableCopy();
 		for (InetSocketAddress address : difference) {
