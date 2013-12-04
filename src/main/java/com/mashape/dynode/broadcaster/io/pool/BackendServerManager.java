@@ -4,13 +4,20 @@ import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.mashape.dynode.broadcaster.AutoUpdateTask;
+import com.mashape.dynode.broadcaster.log.Log;
 
 public class BackendServerManager {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(BackendServerManager.class);
+	
 	private Set<InetSocketAddress> backendServers;
-
 	private Set<BackendServerManagerEventListener> eventListeners;
 
 	public BackendServerManager() {
@@ -28,9 +35,7 @@ public class BackendServerManager {
 
 	public synchronized void setServers(final Set<InetSocketAddress> addresses) {
 		for (InetSocketAddress address : addresses) {
-			if (!backendServers.contains(address)) {
-				addServer(address);
-			}
+			addServer(address);
 		}
 		ImmutableSet<InetSocketAddress> difference = Sets.symmetricDifference(backendServers, addresses).immutableCopy();
 		for (InetSocketAddress address : difference) {
@@ -39,20 +44,28 @@ public class BackendServerManager {
 	}
 
 	public synchronized boolean addServer(final InetSocketAddress address) {
-		boolean result = backendServers.add(address);
-		if (result) {
-			for (BackendServerManagerEventListener listener : eventListeners) {
-				listener.serverAdded(address);
+		boolean result = false;
+		if (!backendServers.contains(address)) {
+			Log.info(LOG, "* Adding " + address.toString());
+			result = backendServers.add(address);
+			if (result) {
+				for (BackendServerManagerEventListener listener : eventListeners) {
+					listener.serverAdded(address);
+				}
 			}
 		}
 		return result;
 	}
 
 	public synchronized boolean removeServer(final InetSocketAddress address) {
-		boolean result = backendServers.remove(address);
-		if (result) {
-			for (BackendServerManagerEventListener listener : eventListeners) {
-				listener.serverRemoved(address);
+		boolean result = false;
+		if (backendServers.contains(address)) {
+			Log.info(LOG, "* Removing " + address.toString());
+			result = backendServers.remove(address);
+			if (result) {
+				for (BackendServerManagerEventListener listener : eventListeners) {
+					listener.serverRemoved(address);
+				}
 			}
 		}
 		return result;

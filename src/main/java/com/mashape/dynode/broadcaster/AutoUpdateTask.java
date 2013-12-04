@@ -78,7 +78,6 @@ public class AutoUpdateTask implements Runnable {
 					String server = servers.getString(i);
 					InetSocketAddress address = DynodeConfiguration.getAddress(server);
 					if (address != null) {
-						Log.info(LOG, "* Adding " + server);
 						serverObjects.add(address);
 					}
 				}
