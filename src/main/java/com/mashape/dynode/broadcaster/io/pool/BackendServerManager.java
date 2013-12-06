@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.mashape.dynode.broadcaster.AutoUpdateTask;
 import com.mashape.dynode.broadcaster.log.Log;
 
 public class BackendServerManager {

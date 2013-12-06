@@ -41,8 +41,8 @@ servers_autoupdate_parameters=
 servers_autoupdate_refresh=10
 
 ############################## GENERAL SETTINGS ###############################
-# The host and port where the server should start 
-host=localhost
+# The host and port where the server should start.
+host=127.0.0.1
 
 # Check that you have permissions to run on the specified port 
 port=9000

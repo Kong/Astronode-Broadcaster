@@ -1,7 +1,11 @@
 package com.mashape.dynode.broadcaster;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +37,7 @@ public class Main {
 		return line;
 	}
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) throws ParseException, UnknownHostException {
 		Options options = new Options();
 		CommandLine line = parseArguments(options, args);
 
@@ -46,14 +50,19 @@ public class Main {
 		init(line.getOptionValue("c"));
 	}
 
-	public static void init(String configurationPath) {
+	public static void init(String configurationPath) throws UnknownHostException {
 		// Load the configuration
 		DynodeConfiguration.init(configurationPath);
 
 		Log.info(LOG, "Starting Dynode Broadcaster");
-
-		final ServerLauncher serverLauncher = new ServerLauncher(Sets.newHashSet(new InetSocketAddress(DynodeConfiguration
-				.getHost(), DynodeConfiguration.getPort())), DynodeConfiguration.getDiscardResponses());
+		
+		Set<InetSocketAddress> bindAddresses = new HashSet<>();
+		bindAddresses.add(new InetSocketAddress(DynodeConfiguration.getHost(), DynodeConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostName(), DynodeConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), DynodeConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLoopbackAddress().getHostAddress(), DynodeConfiguration.getPort()));
+		
+		final ServerLauncher serverLauncher = new ServerLauncher(bindAddresses, DynodeConfiguration.getDiscardResponses());
 
 		List<InetSocketAddress> servers = DynodeConfiguration.getServers();
 		for (InetSocketAddress server : servers) {
