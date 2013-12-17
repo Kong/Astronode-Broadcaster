@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.configuration;
+package com.mashape.astronode.broadcaster.configuration;
 
 public enum LogLevel {
 	TRACE(0), INFO(1), ERROR(2);

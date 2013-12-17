@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.configuration;
+package com.mashape.astronode.broadcaster.configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,12 +13,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.log.Log;
 import com.mashape.unirest.http.HttpMethod;
 
-public class DynodeConfiguration {
+public class BroadcasterConfiguration {
 
-	final static Logger LOG = LoggerFactory.getLogger(DynodeConfiguration.class);
+	final static Logger LOG = LoggerFactory.getLogger(BroadcasterConfiguration.class);
 
 	private static String host;
 	private static int port;

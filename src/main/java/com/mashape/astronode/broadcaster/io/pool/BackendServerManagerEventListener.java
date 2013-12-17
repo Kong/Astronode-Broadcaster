@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.io.pool;
+package com.mashape.astronode.broadcaster.io.pool;
 
 import java.net.InetSocketAddress;
 

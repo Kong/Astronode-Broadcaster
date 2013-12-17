@@ -1,9 +1,9 @@
-package com.mashape.dynode.broadcaster.io;
+package com.mashape.astronode.broadcaster.io;
 
 import com.google.common.base.Function;
-import com.mashape.dynode.broadcaster.io.pool.BackendServerManager;
-import com.mashape.dynode.broadcaster.io.pool.BackendServerManagerEventListener;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.io.pool.BackendServerManager;
+import com.mashape.astronode.broadcaster.io.pool.BackendServerManagerEventListener;
+import com.mashape.astronode.broadcaster.log.Log;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;

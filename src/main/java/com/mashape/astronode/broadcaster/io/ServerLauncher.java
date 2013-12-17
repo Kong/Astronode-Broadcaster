@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.io;
+package com.mashape.astronode.broadcaster.io;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
-import com.mashape.dynode.broadcaster.io.pool.BackendServerManager;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.configuration.BroadcasterConfiguration;
+import com.mashape.astronode.broadcaster.io.pool.BackendServerManager;
+import com.mashape.astronode.broadcaster.log.Log;
 
 public class ServerLauncher {
 
@@ -74,11 +74,11 @@ public class ServerLauncher {
 					public void initChannel(SocketChannel ch) throws Exception {
 						allChannels.add(ch);
 						ChannelPipeline pipeline = ch.pipeline();
-						pipeline.addLast(new IdleStateHandler(DynodeConfiguration.getReadIdleSeconds(), 0, 0));
+						pipeline.addLast(new IdleStateHandler(BroadcasterConfiguration.getReadIdleSeconds(), 0, 0));
 						pipeline.addLast(new FrontendHandler(ServerLauncher.this));
 					}
-				}).option(ChannelOption.SO_BACKLOG, DynodeConfiguration.getBacklogSize())
-				.option(ChannelOption.SO_REUSEADDR, DynodeConfiguration.getReuseAddr());
+				}).option(ChannelOption.SO_BACKLOG, BroadcasterConfiguration.getBacklogSize())
+				.option(ChannelOption.SO_REUSEADDR, BroadcasterConfiguration.getReuseAddr());
 
 		List<Channel> serverChannels = new ArrayList<>(bindAddresses.size());
 		for (InetSocketAddress addr : bindAddresses) {

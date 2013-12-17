@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.mashape.dynode.broadcaster</groupId>
-	<artifactId>dynode-broadcaster</artifactId>
+	<groupId>com.mashape.astronode.broadcaster</groupId>
+	<artifactId>astronode-broadcaster</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>dynode-broadcaster</name>
+	<name>astronode-broadcaster</name>
 	<url>http://www.mashape.com</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,7 +31,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.mashape.dynode.broadcaster.Main</mainClass>
+							<mainClass>com.mashape.astronode.broadcaster.Main</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Created-By>Mashape, Inc.</Created-By>

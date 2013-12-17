@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster;
+package com.mashape.astronode.broadcaster;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
-import com.mashape.dynode.broadcaster.io.ServerLauncher;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.configuration.BroadcasterConfiguration;
+import com.mashape.astronode.broadcaster.io.ServerLauncher;
+import com.mashape.astronode.broadcaster.log.Log;
 
 public class Main {
 
@@ -52,26 +52,26 @@ public class Main {
 
 	public static void init(String configurationPath) throws UnknownHostException {
 		// Load the configuration
-		DynodeConfiguration.init(configurationPath);
+		BroadcasterConfiguration.init(configurationPath);
 
-		Log.info(LOG, "Starting Dynode Broadcaster");
+		Log.info(LOG, "Starting Astronode Broadcaster");
 		
 		Set<InetSocketAddress> bindAddresses = new HashSet<>();
-		bindAddresses.add(new InetSocketAddress(DynodeConfiguration.getHost(), DynodeConfiguration.getPort()));
-		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostName(), DynodeConfiguration.getPort()));
-		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), DynodeConfiguration.getPort()));
-		bindAddresses.add(new InetSocketAddress(InetAddress.getLoopbackAddress().getHostAddress(), DynodeConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(BroadcasterConfiguration.getHost(), BroadcasterConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostName(), BroadcasterConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), BroadcasterConfiguration.getPort()));
+		bindAddresses.add(new InetSocketAddress(InetAddress.getLoopbackAddress().getHostAddress(), BroadcasterConfiguration.getPort()));
 		
-		final ServerLauncher serverLauncher = new ServerLauncher(bindAddresses, DynodeConfiguration.getDiscardResponses());
+		final ServerLauncher serverLauncher = new ServerLauncher(bindAddresses, BroadcasterConfiguration.getDiscardResponses());
 
-		List<InetSocketAddress> servers = DynodeConfiguration.getServers();
+		List<InetSocketAddress> servers = BroadcasterConfiguration.getServers();
 		for (InetSocketAddress server : servers) {
 			serverLauncher.getBackendServerManager().addServer(server);
 		}
 
 		final ScheduledExecutorService autoUpdateExecutor = Executors.newScheduledThreadPool(1);
-		if (DynodeConfiguration.isAutoupdate()) {
-			int refresh = DynodeConfiguration.getServersAutoupdateRefresh();
+		if (BroadcasterConfiguration.isAutoupdate()) {
+			int refresh = BroadcasterConfiguration.getServersAutoupdateRefresh();
 			AutoUpdateTask autoUpdateTask = new AutoUpdateTask(serverLauncher);
 			if (refresh > 0) {
 				autoUpdateExecutor.scheduleAtFixedRate(autoUpdateTask, 0, refresh, TimeUnit.SECONDS);
@@ -83,7 +83,7 @@ public class Main {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
-				Log.info(LOG, "Shutting Dynode Broadcaster");
+				Log.info(LOG, "Shutting Astronode Broadcaster");
 				autoUpdateExecutor.shutdown();
 				serverLauncher.stop();
 			}

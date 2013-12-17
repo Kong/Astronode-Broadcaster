@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.io;
+package com.mashape.astronode.broadcaster.io;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;

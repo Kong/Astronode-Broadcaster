@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster;
+package com.mashape.astronode.broadcaster;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -11,9 +11,9 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
-import com.mashape.dynode.broadcaster.io.ServerLauncher;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.configuration.BroadcasterConfiguration;
+import com.mashape.astronode.broadcaster.io.ServerLauncher;
+import com.mashape.astronode.broadcaster.log.Log;
 import com.mashape.unirest.http.HttpMethod;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -33,9 +33,9 @@ public class AutoUpdateTask implements Runnable {
 	public void run() {
 		Log.info(LOG, "Auto-updating servers");
 
-		String url = DynodeConfiguration.getServersAutoupdateUrl();
+		String url = BroadcasterConfiguration.getServersAutoupdateUrl();
 		Map<String, Object> parameters = new HashMap<String, Object>();
-		String rawParameters = DynodeConfiguration.getServersAutoupdateParameters();
+		String rawParameters = BroadcasterConfiguration.getServersAutoupdateParameters();
 		if (StringUtils.isNotBlank(rawParameters)) {
 			String[] rawParametersParts = rawParameters.split("&");
 			for (String rawParametersPart : rawParametersParts) {
@@ -48,7 +48,7 @@ public class AutoUpdateTask implements Runnable {
 			}
 		}
 
-		HttpMethod method = DynodeConfiguration.getServersAutoupdateMethod();
+		HttpMethod method = BroadcasterConfiguration.getServersAutoupdateMethod();
 		try {
 			HttpResponse<JsonNode> response = null;
 			switch (method) {
@@ -76,7 +76,7 @@ public class AutoUpdateTask implements Runnable {
 				Set<InetSocketAddress> serverObjects = new HashSet<>();
 				for (int i = 0; i < servers.length(); i++) {
 					String server = servers.getString(i);
-					InetSocketAddress address = DynodeConfiguration.getAddress(server);
+					InetSocketAddress address = BroadcasterConfiguration.getAddress(server);
 					if (address != null) {
 						serverObjects.add(address);
 					}

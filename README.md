@@ -2,8 +2,8 @@
 <img src="http://upload.wikimedia.org/wikipedia/commons/d/dc/Broadcast.svg" alt="Logo" height="120" />
 </p>
 
-# Dynode Broadcaster
-The Dynode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready.
+# Astronode Broadcaster
+The Astronode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready.
 
 Created, sponsored and used in production by [Mashape](https://www.mashape.com), the Cloud API Hub.
 
@@ -19,32 +19,32 @@ Created, sponsored and used in production by [Mashape](https://www.mashape.com),
 ## Usage
 
 ```
-java -jar dynode-broadcaster.jar -c ./configuration
+java -jar astronode-broadcaster.jar -c ./configuration
 ```
 
 ## Use Cases
 
-There are many different use case scenarios where the Dynode Broadcaster can work well. It can be used to create eventual consistent distributed clusters for those services that don't support clustering. For example you can use it with in-memory stores like Redis or Memcached to replicate any kind of data, counters, or implement an eventual consistent distributed caching cluster across a LAN/WAN. 
+There are many different use case scenarios where the Astronode Broadcaster can work well. It can be used to create eventual consistent distributed clusters for those services that don't support clustering. For example you can use it with in-memory stores like Redis or Memcached to replicate any kind of data, counters, or implement an eventual consistent distributed caching cluster across a LAN/WAN. 
 
 For example:
 
 * You have two application servers in two different world regions: `app.us` and `app.eu`
 * You also have one Redis server for each region: `redis.us:6379` and `redis.eu:6379`
 * The application servers need to talk with Redis to load cached content. `app.us` will read from `redis.us` and `app.eu` will read from `redis.eu` to reduce network latency
-* Every application reads data from the closest Redis server, but broadcasts the writes to the other region by using Dynode Broadcaster
-* You can setup two Dynode Broadcasters in each region: `broadcaster.us:6379` and `broadcaster.eu:6379`
+* Every application reads data from the closest Redis server, but broadcasts the writes to the other region by using Astronode Broadcaster
+* You can setup two Astronode Broadcasters in each region: `broadcaster.us:6379` and `broadcaster.eu:6379`
 * You configure both broadcasters with the following backend servers: `redis.us:6379` and `redis.eu:6379`
 
 With this configuration, any command sent to `broadcaster.us:6379` is broadcasted to both `redis1.us:6379` and `redis2.eu:6379`. The same happens for every command sent to `broadcaster.eu:6379`.
 
-The server `app.us` is in the same region of `redis.us`. Now you could execute all the reads directly from `redis.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `app.eu` could read the same data in his own region from `redis.eu:6379`. Basically the app servers are using Redis for reading, and Dynode Broadcaster for writing.
+The server `app.us` is in the same region of `redis.us`. Now you could execute all the reads directly from `redis.us:6379` and submit all the writes to `broadcaster.us:6379`, so that an other server `app.eu` could read the same data in his own region from `redis.eu:6379`. Basically the app servers are using Redis for reading, and Astronode Broadcaster for writing.
 
 If you need to broadcast data to, let's say, 100+ Redis machines, open just one connection to the broadcaster and let him do the hard work for you. And with the auto-update feature, you can hot-configure the broadcaster remotely without reloading it.
 
 # Configuration
 
 ```
-# Dynode Broadcaster configuration file
+# Astronode Broadcaster configuration file
 
 # Backend Servers configuration
 #
@@ -96,7 +96,7 @@ log_level=INFO
 backlog_size=128
 reuse_addr=true
 
-# By default Dynode Broadcaster returns all the responses from all the servers
+# By default Astronode Broadcaster returns all the responses from all the servers
 # to skip the responses if not needed, and increase system performance, set this property to "discard_responses=true"
 discard_responses=false
 

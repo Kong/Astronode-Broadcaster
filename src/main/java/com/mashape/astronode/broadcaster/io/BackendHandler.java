@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.io;
+package com.mashape.astronode.broadcaster.io;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mashape.dynode.broadcaster.configuration.DynodeConfiguration;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.configuration.BroadcasterConfiguration;
+import com.mashape.astronode.broadcaster.log.Log;
 
 @ChannelHandler.Sharable
 class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutureListener, Runnable {
@@ -51,7 +51,7 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
 				+ serverAddress.getPort();
 		this.bootstrap = new Bootstrap();
 		bootstrap.group(parent.getWorkerGroup()).channel(NioSocketChannel.class)
-				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, DynodeConfiguration.getConnectTimeoutSeconds() * 1000)
+				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, BroadcasterConfiguration.getConnectTimeoutSeconds() * 1000)
 				.handler(this);
 		Log.trace(LOG, "{} backend handler initialized", id);
 	}
@@ -130,8 +130,8 @@ class BackendHandler extends ChannelInboundHandlerAdapter implements ChannelFutu
 
 	private void scheduleConnectionEstablishment() {
 		Log.info(LOG, "New attempt to establish a connection with backend " + "server {}:{} will be made {} seconds later",
-				serverAddress.getHostString(), serverAddress.getPort(), DynodeConfiguration.getReconnectDelaySeconds());
-		parent.getWorkerGroup().schedule(BackendHandler.this, DynodeConfiguration.getReconnectDelaySeconds(), TimeUnit.SECONDS);
+				serverAddress.getHostString(), serverAddress.getPort(), BroadcasterConfiguration.getReconnectDelaySeconds());
+		parent.getWorkerGroup().schedule(BackendHandler.this, BroadcasterConfiguration.getReconnectDelaySeconds(), TimeUnit.SECONDS);
 	}
 
 	private void transferFirstPacketInQueue() {

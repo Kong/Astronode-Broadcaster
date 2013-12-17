@@ -1,4 +1,4 @@
-package com.mashape.dynode.broadcaster.io.pool;
+package com.mashape.astronode.broadcaster.io.pool;
 
 import java.net.InetSocketAddress;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.mashape.dynode.broadcaster.log.Log;
+import com.mashape.astronode.broadcaster.log.Log;
 
 public class BackendServerManager {
 	

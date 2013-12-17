@@ -1,4 +1,4 @@
-# Dynode Broadcaster configuration file
+# Astronode Broadcaster configuration file
 
 # Backend Servers configuration
 # You can explicitly set the backend servers with the "servers" property. Both 
@@ -54,7 +54,7 @@ log_level=INFO
 backlog_size=128 
 reuse_addr=true
 
-# By default Dynode Broadcaster returns all the responses from all the servers 
+# By default Astronode Broadcaster returns all the responses from all the servers 
 # to skip the responses if not needed, and increase system performance, set this
 # property to "discard_responses=true" 
 discard_responses=false
