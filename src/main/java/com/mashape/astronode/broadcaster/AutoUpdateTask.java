@@ -31,7 +31,7 @@ public class AutoUpdateTask implements Runnable {
 
 	@Override
 	public void run() {
-		Log.info(LOG, "Auto-updating servers");
+		Log.trace(LOG, "Auto-updating servers");
 
 		String url = BroadcasterConfiguration.getServersAutoupdateUrl();
 		Map<String, Object> parameters = new HashMap<String, Object>();

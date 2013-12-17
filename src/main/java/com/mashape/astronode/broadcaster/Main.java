@@ -19,7 +19,6 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
 import com.mashape.astronode.broadcaster.configuration.BroadcasterConfiguration;
 import com.mashape.astronode.broadcaster.io.ServerLauncher;
 import com.mashape.astronode.broadcaster.log.Log;
