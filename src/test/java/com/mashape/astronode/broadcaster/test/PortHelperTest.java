@@ -14,9 +14,10 @@ public class PortHelperTest {
 	@SuppressWarnings("resource")
 	@Test
 	public void testPortAvailable() throws IOException {
-		assertTrue(PortHelper.available(20000));
-		new ServerSocket(50000);
-		assertFalse(PortHelper.available(50000));
+		int availablePort = PortHelper.getAvailablePort();
+		assertTrue(PortHelper.available(availablePort));
+		new ServerSocket(availablePort);
+		assertFalse(PortHelper.available(availablePort));
 	}
 	
 }
