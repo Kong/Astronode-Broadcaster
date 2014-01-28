@@ -177,5 +177,9 @@ public class BroadcasterConfiguration {
 	public static LogLevel getLogLevel() {
 		return logLevel;
 	}
+	
+	public static void setLogLevel(LogLevel logLevelInfo) {
+		logLevel = logLevelInfo;
+	}
 
 }
