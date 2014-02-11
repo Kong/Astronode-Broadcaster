@@ -26,6 +26,8 @@ java -jar astronode-broadcaster.jar -c ./configuration
 
 There are many different use case scenarios where the Astronode Broadcaster can work well. It can be used to create eventual consistent distributed clusters for those services that don't support clustering. For example you can use it with in-memory stores like Redis or Memcached to replicate any kind of data, counters, or implement an eventual consistent distributed caching cluster across a LAN/WAN. 
 
+### Distributed Redis cluster
+
 For example:
 
 * You have two application servers in two different world regions: `app.us` and `app.eu`
