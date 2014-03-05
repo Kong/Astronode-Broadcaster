@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm astronode-broadcaster.zip
+mvn clean assembly:assembly
+cp target/*-jar-with-dependencies.jar astronode-broadcaster.jar
+zip astronode-broadcaster.zip configuration astronode-broadcaster.jar
+rm astronode-broadcaster.jar

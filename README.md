@@ -22,6 +22,28 @@ Created with love by [thefosk](https://github.com/thefosk) @ [mashape.com](https
 java -jar astronode-broadcaster.jar -c ./configuration
 ```
 
+## Download
+
+You can download the Astronode-Broadcaster from: 
+
+### Generate JAR from source
+
+You can generate the JAR file using [Maven](http://maven.apache.org/), by executing:
+
+```
+git clone https://github.com/Mashape/Astronode-Broadcaster
+cd Astronode-Broadcaster
+mvn clean assembly:assembly
+```
+
+This will generate two `jar` files in the `target` folder. Use the `astronode-broadcaster-1.0-SNAPSHOT-jar-with-dependencies.jar` file (and not `astronode-broadcaster-1.0-SNAPSHOT.jar`).
+
+This means you can run the Astronode-Broadcaster by executing:
+
+```
+java -jar target/astronode-broadcaster-1.0-SNAPSHOT-jar-with-dependencies.jar -c ./configuraton
+```
+
 ## Use Cases
 
 There are many different use case scenarios where the Astronode Broadcaster can work well. It can be used to create eventual consistent distributed clusters for those services that don't support clustering. For example you can use it with in-memory stores like Redis or Memcached to replicate any kind of data, counters, or implement an eventual consistent distributed caching cluster across a LAN/WAN. 
