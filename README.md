@@ -24,7 +24,7 @@ java -jar astronode-broadcaster.jar -c ./configuration
 
 ## Download
 
-You can download the Astronode-Broadcaster from: 
+You can download the Astronode-Broadcaster from: [https://github.com/Mashape/Astronode-Broadcaster/raw/master/astronode-broadcaster.zip](https://github.com/Mashape/Astronode-Broadcaster/raw/master/astronode-broadcaster.zip)
 
 ### Generate JAR from source
 
