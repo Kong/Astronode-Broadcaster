@@ -5,7 +5,7 @@
 # Astronode Broadcaster [![Build Status](https://travis-ci.org/Mashape/Astronode-Broadcaster.png)](https://travis-ci.org/Mashape/Astronode-Broadcaster)
 The Astronode Broadcaster is a TCP replication server, or broadcaster, that replicates TCP commands to other TCP servers. Built with Java and Netty, it's super fast, and enterprise ready.
 
-Created, sponsored and used in production by [Mashape](https://www.mashape.com), the Cloud API Hub.
+Created with love by [thefosk](https://github.com/thefosk) @ [mashape.com](https://mashape.com)
 
 ### Features
 
