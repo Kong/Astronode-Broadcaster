@@ -68,7 +68,7 @@ public class BroadcasterConfiguration {
 		if (StringUtils.isNotBlank(serversList)) {
 			String[] confServers = serversList.split(",");
 			for (String server : confServers) {
-				InetSocketAddress address = getAddress(server);
+				InetSocketAddress address = getAddress(server.trim());
 				if (address != null) {
 					servers.add(address);
 				}
