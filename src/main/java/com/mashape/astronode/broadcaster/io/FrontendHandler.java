@@ -1,10 +1,5 @@
 package com.mashape.astronode.broadcaster.io;
 
-import com.google.common.base.Function;
-import com.mashape.astronode.broadcaster.io.pool.BackendServerManager;
-import com.mashape.astronode.broadcaster.io.pool.BackendServerManagerEventListener;
-import com.mashape.astronode.broadcaster.log.Log;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,13 +8,18 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.mashape.astronode.broadcaster.io.pool.BackendServerManager;
+import com.mashape.astronode.broadcaster.io.pool.BackendServerManagerEventListener;
+import com.mashape.astronode.broadcaster.log.Log;
 
 class FrontendHandler extends ChannelInboundHandlerAdapter implements BackendServerManagerEventListener {
 
