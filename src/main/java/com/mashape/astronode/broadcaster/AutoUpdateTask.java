@@ -53,7 +53,7 @@ public class AutoUpdateTask implements Runnable {
 			HttpResponse<JsonNode> response = null;
 			switch (method) {
 			case GET:
-				response = Unirest.get(url).fields(parameters).asJson();
+				response = Unirest.get(url).queryString(parameters).asJson();
 				break;
 			case POST:
 				response = Unirest.post(url).fields(parameters).asJson();
@@ -71,7 +71,7 @@ public class AutoUpdateTask implements Runnable {
 				break;
 			}
 
-			if (response.getCode() == 200) {
+			if (response.getStatus() == 200) {
 				JSONArray servers = response.getBody().getArray();
 				Set<InetSocketAddress> serverObjects = new HashSet<>();
 				for (int i = 0; i < servers.length(); i++) {
@@ -83,7 +83,7 @@ public class AutoUpdateTask implements Runnable {
 				}
 				serverLauncher.getBackendServerManager().setServers(serverObjects);
 			} else {
-				Log.error(LOG, "The auto update URL returned " + response.getCode());
+				Log.error(LOG, "The auto update URL returned " + response.getStatus());
 			}
 
 		} catch (Exception e) {
